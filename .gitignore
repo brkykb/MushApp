@@ -1,0 +1,48 @@
+# --- DATASET (Sadece Görselleri Engelliyoruz, Kodlar Değil) ---
+**/mantardataset/sınıflar/
+**/mantardataset/yenisiniflar/
+**/mantardataset/output_crops/
+**/mantardataset/cantharellus_cibarius/
+**/dataset/
+*.jpg
+*.jpeg
+*.png
+*.zip
+*.rar
+
+# --- PYTHON / DJANGO ---
+venv/
+.venv/
+env/
+__pycache__/
+*.pyc
+Mantar/media/
+db.sqlite3-journal
+
+# --- YAPAY ZEKA MODELLERİ (Büyük olanlar) ---
+# Projenin neresinde olursa olsun büyük modelleri engelliyoruz
+*.h5
+*.keras
+# Sadece backend'in kullandığı 31MB'lık modele istisna tanıyalım
+!**/Mantar/ml_engine/models/model_94_acc.keras
+**/Model/
+**/modeldeneme/
+**/maskdeneme/mantar_segmentasyon_unet.keras
+
+# --- MOBIL (Flutter & iOS) ---
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+build/
+app/mantar/ios/Pods/
+app/mantar/android/.gradle/
+**/mantar_ios/Pods/
+
+# --- IDE & SISTEM ---
+.idea/
+.vscode/
+.DS_Store
+*.iml
+*.swp
