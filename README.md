@@ -92,7 +92,9 @@
 ---
 
 ## 📄 License
-This project is for educational/personal use. Please check the LICENSE file for more details.
+Copyright © 2026 Berkay Karabulut. All Rights Reserved.
+
+This project and its source code are proprietary. Unauthorized use, reproduction, or distribution is strictly prohibited. See the [LICENSE](LICENSE) file for more details.
 
 ---
 
