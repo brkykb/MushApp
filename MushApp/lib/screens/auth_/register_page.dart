@@ -208,6 +208,12 @@ class _RegisterPageState extends State<RegisterPage> {
               padding: const EdgeInsets.all(24),
               child: Column(
                 children: [
+                  Image.asset(
+                    'assets/images/logo.png',
+                    height: 70,
+                    width: 70,
+                  ),
+                  const SizedBox(height: 10),
                   Text(
                     "Aramıza Katıl",
                     style: theme.textTheme.headlineMedium?.copyWith(

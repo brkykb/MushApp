@@ -58,7 +58,7 @@ class _HomePageState extends State<HomePage> {
         scrolledUnderElevation: 0,
         title: Row(
           children: [
-            const Icon(Icons.eco_rounded, color: MushTheme.primaryGreen, size: 24),
+            Image.asset('assets/images/logo.png', width: 28, height: 28),
             const SizedBox(width: 8),
             const Text(
               "MushApp",

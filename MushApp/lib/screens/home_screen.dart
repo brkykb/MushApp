@@ -219,13 +219,13 @@ class _MushHomeScreenState extends State<MushHomeScreen> {
   Widget _buildFieldNotes() {
     return Row(
       children: [
-        _buildNoteCard("Spore Prints", const Color(0xFF1B3022), Icons.eco),
+        _buildNoteCard("Spore Prints", const Color(0xFF1B3022), 'assets/images/logo.png'),
         _buildNoteCard("Lookalikes", const Color(0xFFD97D54), Icons.warning),
       ],
     );
   }
 
-  Widget _buildNoteCard(String title, Color color, IconData icon) {
+  Widget _buildNoteCard(String title, Color color, dynamic iconOrPath) {
     return Expanded(
       child: Container(
         height: 120,
@@ -236,7 +236,10 @@ class _MushHomeScreenState extends State<MushHomeScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            Icon(icon, color: Colors.white),
+            if (iconOrPath is IconData)
+              Icon(iconOrPath, color: Colors.white)
+            else
+              Image.asset(iconOrPath, width: 24, height: 24, color: Colors.white),
             const SizedBox(height: 8),
             Text(title, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
           ],

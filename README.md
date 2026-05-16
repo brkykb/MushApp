@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="src/logo.png" width="150">
+</p>
+
 # MushApp 🍄
 
 **MushApp** is a state-of-the-art mushroom identification and classification platform. It leverages Deep Learning to help users identify various mushroom species with high accuracy while providing a rich encyclopedia, community features, and a gamified experience.

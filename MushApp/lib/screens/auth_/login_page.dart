@@ -202,10 +202,10 @@ class _LoginPageState extends State<LoginPage> {
               padding: const EdgeInsets.all(24.0),
               child: Column(
                 children: [
-                  Icon(
-                    Icons.forest_rounded,
-                    size: 80,
-                    color: Colors.white.withOpacity(0.9),
+                  Image.asset(
+                    'assets/images/logo.png',
+                    height: 80,
+                    width: 80,
                   ),
                   const SizedBox(height: 10),
                   Text(
