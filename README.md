@@ -20,7 +20,6 @@
   <tr>
     <td align="center"><b>In-App Store</b><br><img src="src/Mush-App-Store.jpeg" width="200"></td>
     <td align="center"><b>Registration</b><br><img src="src/Mush-App-Register.jpeg" width="200"></td>
-    <td align="center"><b>Web Home</b><br><img src="src/MushApp-Web-Home.png" width="200"></td>
   </tr>
 </table>
 
