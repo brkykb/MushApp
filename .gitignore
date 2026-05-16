@@ -7,6 +7,9 @@
 *.jpg
 *.jpeg
 *.png
+!src/*.jpg
+!src/*.jpeg
+!src/*.png
 *.zip
 *.rar
 
