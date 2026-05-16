@@ -4,31 +4,33 @@
 
 ---
 
-## 📱 Features
+## 📱 Mobile App Features
 
-### 🔍 AI-Powered Identification
-Scan mushrooms in real-time using our custom-trained deep learning models. Get instant results with confidence scores and detailed species information.
-> *[Place AI Scanner Screenshot Here]*
+<table align="center">
+  <tr>
+    <td align="center"><b>Home & Dashboard</b><br><img src="src/Mush-App-HomePage.jpeg" width="200"></td>
+    <td align="center"><b>AI Scanner</b><br><img src="src/Mush-App-Scanner.jpeg" width="200"></td>
+    <td align="center"><b>Mushroom Wiki</b><br><img src="src/Mush-App-Wiki.jpeg" width="200"></td>
+  </tr>
+  <tr>
+    <td align="center"><b>Mushroom Mapping</b><br><img src="src/MushApp-Map.jpeg" width="200"></td>
+    <td align="center"><b>Authentication</b><br><img src="src/Mush-App-Login.jpeg" width="200"></td>
+    <td align="center"><b>User Profile</b><br><img src="src/Mush-App-Profile.jpeg" width="200"></td>
+  </tr>
+  <tr>
+    <td align="center"><b>In-App Store</b><br><img src="src/Mush-App-Store.jpeg" width="200"></td>
+    <td align="center"><b>Registration</b><br><img src="src/Mush-App-Register.jpeg" width="200"></td>
+    <td align="center"><b>Web Home</b><br><img src="src/MushApp-Web-Home.png" width="200"></td>
+  </tr>
+</table>
 
-### 📖 Mushroom Wiki & Encyclopedia
-Explore a comprehensive library of mushrooms with high-quality images, descriptions, edibility status, and ecological roles.
-> *[Place Wiki Screenshot Here]*
+## 🌐 Web Interface
 
-### 🔐 Secure Authentication
-Seamless login and registration system supporting email/password and Firebase authentication.
-> *[Place Login/Register Screenshot Here]*
-
-### 🗺️ Mushroom Mapping
-Keep track of where you've found specific mushrooms and explore findings around you.
-> *[Place Map Screenshot Here]*
-
-### 🛒 In-App Shop & Rewards
-Earn XP, level up, and use in-app currency to unlock special features or items.
-> *[Place Shop Screenshot Here]*
-
-### 🏠 Personalized Home Dashboard
-Stay updated with the "Mushroom of the Day," your recent scans, and quick stats.
-> *[Place Dashboard Screenshot Here]*
+<table align="center">
+  <tr>
+    <td align="center"><b>Web Landing Page</b><br><img src="src/MushApp-Web-Home.png" width="500"></td>
+  </tr>
+</table>
 
 ---
 
