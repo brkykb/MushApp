@@ -1,14 +1,12 @@
-import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class ApiService {
   final Dio _dio = Dio(
     BaseOptions(
-      // Bilgisayarının Yerel IP adresi (Telefonun erişebilmesi için)
-      baseUrl: 'https://mushapp.dev/api', 
-      connectTimeout: const Duration(seconds: 10),
-      receiveTimeout: const Duration(seconds: 10),
+    baseUrl: 'https://mushapp.dev/api', 
+    connectTimeout: const Duration(seconds: 15),
+    receiveTimeout: const Duration(seconds: 15),
     ),
   );
 

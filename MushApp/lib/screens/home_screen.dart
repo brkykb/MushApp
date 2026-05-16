@@ -251,7 +251,7 @@ class _MushHomeScreenState extends State<MushHomeScreen> {
         if (provider.history.isEmpty) {
           return const Padding(padding: EdgeInsets.all(16.0), child: Text("Henüz keşif yok."));
         }
-        return Container(
+        return SizedBox(
           height: 180,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,

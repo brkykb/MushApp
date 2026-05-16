@@ -1,7 +1,10 @@
-import 'dart:ui';
+import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:mantar/screens/home_page.dart';
+import 'package:mantar/services/api_service.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -20,6 +23,86 @@ class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController = TextEditingController();
+  final ApiService _apiService = ApiService();
+
+  Future<void> _syncWithBackend() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      final idToken = await user.getIdToken();
+      await _apiService.firebaseAuth(idToken!);
+    }
+  }
+
+  Future<void> _signInWithGoogle() async {
+    setState(() { _isLoading = true; });
+    try {
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+      final GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
+
+      if (googleAuth != null) {
+        final credential = GoogleAuthProvider.credential(
+          accessToken: googleAuth.accessToken,
+          idToken: googleAuth.idToken,
+        );
+        await FirebaseAuth.instance.signInWithCredential(credential);
+        await _syncWithBackend();
+        
+        if (!mounted) return;
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const HomePage()),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Google Giriş Hatası: $e")));
+      }
+    } finally {
+      if (mounted) setState(() { _isLoading = false; });
+    }
+  }
+
+  Future<void> _signInWithApple() async {
+    setState(() { _isLoading = true; });
+    try {
+      final appleCredential = await SignInWithApple.getAppleIDCredential(
+        scopes: [
+          AppleIDAuthorizationScopes.email,
+          AppleIDAuthorizationScopes.fullName,
+        ],
+      );
+
+      if (appleCredential.identityToken == null) {
+        throw Exception("Apple Identity Token alınamadı.");
+      }
+
+      final OAuthProvider oauthProvider = OAuthProvider("apple.com");
+      final AuthCredential credential = oauthProvider.credential(
+        idToken: appleCredential.identityToken,
+        accessToken: appleCredential.authorizationCode,
+      );
+
+      await FirebaseAuth.instance.signInWithCredential(credential);
+      await _syncWithBackend();
+
+      if (!mounted) return;
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const HomePage()),
+      );
+    } catch (e) {
+      debugPrint("Apple Register Detail Error: $e");
+      if (mounted) {
+        String errorMsg = e.toString();
+        if (errorMsg.contains("com.apple.AuthenticationServices.AuthorizationError")) {
+          errorMsg = "Apple girişi iptal edildi veya bir hata oluştu.";
+        }
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Apple Giriş Hatası: $errorMsg")));
+      }
+    } finally {
+      if (mounted) setState(() { _isLoading = false; });
+    }
+  }
 
   Future<void> _register() async {
     if (_nameController.text.trim().isEmpty || _surnameController.text.trim().isEmpty ||
@@ -44,6 +127,8 @@ class _RegisterPageState extends State<RegisterPage> {
       if (credential.user != null) {
         // İsim ve Soyismi Firebase profiline ekleyelim
         await credential.user!.updateDisplayName("${_nameController.text.trim()} ${_surnameController.text.trim()}");
+        
+        await _syncWithBackend();
         
         if (!mounted) return;
         Navigator.pushReplacement(
@@ -144,7 +229,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   ClipRRect(
                     borderRadius: BorderRadius.circular(30),
                     child: BackdropFilter(
-                      filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                      filter: ui.ImageFilter.blur(sigmaX: 10, sigmaY: 10),
                       child: Container(
                         padding: const EdgeInsets.all(32),
                         decoration: BoxDecoration(
@@ -283,14 +368,14 @@ class _RegisterPageState extends State<RegisterPage> {
                                   label: "G",
                                   color: Colors.white,
                                   textColor: Colors.red,
-                                  onTap: () {},
+                                  onTap: _signInWithGoogle,
                                 ),
                                 const SizedBox(width: 20),
                                 _buildSocialButton(
                                   label: "",
                                   color: Colors.white,
                                   textColor: Colors.black,
-                                  onTap: () {},
+                                  onTap: _signInWithApple,
                                 ),
                               ],
                             ),

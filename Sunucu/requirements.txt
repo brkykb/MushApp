@@ -1,0 +1,12 @@
+django
+djangorestframework
+django-cors-headers
+tensorflow
+opencv-python-headless
+numpy
+requests
+pillow
+firebase-admin==6.5.0
+gunicorn
+psycopg2-binary
+python-dotenv

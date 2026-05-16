@@ -46,3 +46,11 @@ app/mantar/android/.gradle/
 .DS_Store
 *.iml
 *.swp
+
+# --- SECRETS & CONFIGS ---
+.env
+*.env
+firebase-adminsdk.json
+**/google-services.json
+**/GoogleService-Info.plist
+sunucu_deploy.zip

@@ -1,8 +1,11 @@
-import 'dart:ui';
+import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'register_page.dart'; // Sayfa geçişi için
 import 'package:mantar/screens/home_page.dart';
+import 'package:mantar/services/api_service.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -14,27 +17,40 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   bool _isPasswordVisible = false;
   bool _isLoading = false;
-  
+
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final ApiService _apiService = ApiService();
+
+  Future<void> _syncWithBackend() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      final idToken = await user.getIdToken();
+      await _apiService.firebaseAuth(idToken!);
+    }
+  }
 
   Future<void> _login() async {
-    if (_emailController.text.trim().isEmpty || _passwordController.text.trim().isEmpty) {
+    if (_emailController.text.trim().isEmpty ||
+        _passwordController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Lütfen email ve şifre giriniz.")),
       );
       return;
     }
 
-    setState(() { _isLoading = true; });
+    setState(() {
+      _isLoading = true;
+    });
 
     try {
       final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
-      
+
       if (credential.user != null) {
+        await _syncWithBackend();
         if (!mounted) return;
         Navigator.pushReplacement(
           context,
@@ -51,15 +67,109 @@ class _LoginPageState extends State<LoginPage> {
         message = "Geçersiz email formatı.";
       }
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(message)));
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Bir hata oluştu: $e")));
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text("Bir hata oluştu: $e")));
       }
     } finally {
       if (mounted) {
-        setState(() { _isLoading = false; });
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _signInWithGoogle() async {
+    setState(() {
+      _isLoading = true;
+    });
+    try {
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+      final GoogleSignInAuthentication? googleAuth =
+          await googleUser?.authentication;
+
+      if (googleAuth != null) {
+        final credential = GoogleAuthProvider.credential(
+          accessToken: googleAuth.accessToken,
+          idToken: googleAuth.idToken,
+        );
+        await FirebaseAuth.instance.signInWithCredential(credential);
+        await _syncWithBackend();
+
+        if (!mounted) return;
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const HomePage()),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text("Google Giriş Hatası: $e")));
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _signInWithApple() async {
+    setState(() {
+      _isLoading = true;
+    });
+    try {
+      final appleCredential = await SignInWithApple.getAppleIDCredential(
+        scopes: [
+          AppleIDAuthorizationScopes.email,
+          AppleIDAuthorizationScopes.fullName,
+        ],
+      );
+
+      if (appleCredential.identityToken == null) {
+        throw Exception("Apple Identity Token alınamadı.");
+      }
+
+      final OAuthProvider oauthProvider = OAuthProvider("apple.com");
+      final AuthCredential credential = oauthProvider.credential(
+        idToken: appleCredential.identityToken,
+        accessToken: appleCredential.authorizationCode,
+      );
+
+      await FirebaseAuth.instance.signInWithCredential(credential);
+      await _syncWithBackend();
+
+      if (!mounted) return;
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const HomePage()),
+      );
+    } catch (e) {
+      debugPrint("Apple Login Detail Error: $e");
+      if (mounted) {
+        String errorMsg = e.toString();
+        if (errorMsg.contains("com.apple.AuthenticationServices.AuthorizationError")) {
+          errorMsg = "Apple girişi iptal edildi veya bir hata oluştu.";
+        }
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text("Apple Giriş Hatası: $errorMsg")));
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
       }
     }
   }
@@ -112,7 +222,7 @@ class _LoginPageState extends State<LoginPage> {
                   ClipRRect(
                     borderRadius: BorderRadius.circular(30),
                     child: BackdropFilter(
-                      filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                      filter: ui.ImageFilter.blur(sigmaX: 10, sigmaY: 10),
                       child: Container(
                         padding: const EdgeInsets.all(32),
                         decoration: BoxDecoration(
@@ -191,16 +301,18 @@ class _LoginPageState extends State<LoginPage> {
                                     borderRadius: BorderRadius.circular(16),
                                   ),
                                 ),
-                                child: _isLoading 
-                                  ? const CircularProgressIndicator(color: Colors.white)
-                                  : const Text(
-                                      "Giriş Yap",
-                                      style: TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold,
+                                child: _isLoading
+                                    ? const CircularProgressIndicator(
                                         color: Colors.white,
+                                      )
+                                    : const Text(
+                                        "Giriş Yap",
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                        ),
                                       ),
-                                    ),
                               ),
                             ),
 
@@ -239,23 +351,17 @@ class _LoginPageState extends State<LoginPage> {
                               children: [
                                 // Google Butonu
                                 _buildSocialButton(
-                                  label:
-                                      "G", // İleride buraya Google Logo resmi koyacaksın
+                                  label: "G",
                                   color: Colors.white,
-                                  textColor: Colors.red, // Google kırmızısı
-                                  onTap: () {
-                                    print("Google ile giriş");
-                                  },
+                                  textColor: Colors.red,
+                                  onTap: _signInWithGoogle,
                                 ),
                                 // Apple Butonu
                                 _buildSocialButton(
-                                  label:
-                                      "", // Apple Logosu (Mac'te görünür, değilse A yaz)
+                                  label: "",
                                   color: Colors.white,
                                   textColor: Colors.black,
-                                  onTap: () {
-                                    print("Apple ile giriş");
-                                  },
+                                  onTap: _signInWithApple,
                                 ),
                               ],
                             ),

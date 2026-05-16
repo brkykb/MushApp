@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:mantar/providers/mushroom_provider.dart';
 
 class MushShopScreen extends StatelessWidget {
   const MushShopScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final profile = context.watch<MushroomProvider>().userProfile;
+    final coins = profile?['money']?.toString() ?? "0";
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("MushShop"),
@@ -12,12 +17,21 @@ class MushShopScreen extends StatelessWidget {
           Container(
             margin: const EdgeInsets.only(right: 16),
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            decoration: BoxDecoration(color: const Color(0xFFD4AF37).withOpacity(0.1), borderRadius: BorderRadius.circular(20)),
-            child: const Row(
+            decoration: BoxDecoration(
+              color: const Color(0xFFD4AF37).withOpacity(0.1),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Row(
               children: [
-                Icon(Icons.monetization_on, color: Color(0xFFD4AF37), size: 18),
-                SizedBox(width: 4),
-                Text("850", style: TextStyle(color: Color(0xFFD4AF37), fontWeight: FontWeight.bold)),
+                const Icon(Icons.monetization_on, color: Color(0xFFD4AF37), size: 18),
+                const SizedBox(width: 4),
+                Text(
+                  coins,
+                  style: const TextStyle(
+                    color: Color(0xFFD4AF37),
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ],
             ),
           )
